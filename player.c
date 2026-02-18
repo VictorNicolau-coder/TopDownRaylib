@@ -1,13 +1,9 @@
 #include "headers\player.h"
 
-int cProjectilesPlayer = 0;
-float cooldownPlayer = 1.0f;
-float bProjectilesPlayer = 1.0f;
-
 float flipH = 1; 
 float flipV = 1;
 
-int LastHitTime = 0;
+double LastHitTime = 0;
 
 Player CreatePlayer(Texture2D text, Vector2 position, float velocity, int life){
     Player p = {
@@ -17,83 +13,75 @@ Player CreatePlayer(Texture2D text, Vector2 position, float velocity, int life){
         .velocity = velocity,
         .life = life,
         .move = position,
-        .acceleration = 0.25
+        .smoothing = 0.25,
+
+        .currentProjectile = 0,
+        .cooldown = 0.2f,
+        .projectileTimer = 1.0f
     };
     return p;
 }
 
-void PlayerUpdate(Player *p, Tile *tiles, int lenght){
+void PlayerUpdate(Player *p, Tile *tiles, int length){
     float delta = GetFrameTime();
     
-    if (p->life > 0){
+    if (p->life <= 0) return;
 
-        Vector2 newMove = {0};
+    Vector2 newMove = {0};
 
-        float hor_move = (IsKeyDown(KEY_RIGHT) - IsKeyDown(KEY_LEFT));
-        float ver_move = (IsKeyDown(KEY_DOWN) - IsKeyDown(KEY_UP));
+    float hor_move = (IsKeyDown(KEY_RIGHT) - IsKeyDown(KEY_LEFT));
+    float ver_move = (IsKeyDown(KEY_DOWN) - IsKeyDown(KEY_UP));
 
-        if (hor_move != 0 || ver_move != 0){
-            
-            newMove = (Vector2){hor_move, ver_move};
-            if (hor_move != 0)
-                flipH = hor_move;  
+    if (hor_move != 0 || ver_move != 0){
+        
+        newMove = (Vector2){hor_move, ver_move};
+        if (hor_move != 0)
+            flipH = hor_move;  
 
-            // Normaliza o movimento diagonal, se necessário
-            if (newMove.x != 0 && newMove.y != 0)
-                newMove = Vector2Normalize(newMove);
+        // Normaliza o movimento diagonal, se necessário
+        if (newMove.x != 0 && newMove.y != 0)
+            newMove = Vector2Normalize(newMove);
 
-            // Atualiza a posição do jogador
-            p->move.x += newMove.x * p->velocity * delta;
-            p->move.y += newMove.y * p->velocity * delta;
-        }
+        // Atualiza a posição do jogador
+        p->move.x += newMove.x * p->velocity * delta;
+        p->move.y += newMove.y * p->velocity * delta;
+    }
 
-        p->rect.x = Lerp(p->rect.x, p->move.x, p->acceleration);
-        p->rect.y = Lerp(p->rect.y, p->move.y, p->acceleration);
+    p->rect.x = Lerp(p->rect.x, p->move.x, p->smoothing);
+    p->rect.y = Lerp(p->rect.y, p->move.y, p->smoothing);
 
-        for (int i = 0; i < lenght; i++){
-            Tile *tile = tiles + i;
+    for (int i = 0; i < length; i++) {
+        Tile *tile = &tiles[i];
 
-            if (CheckCollisionRecs(p->rect, tile->rect) && tile->tileType == BRICK){
-                Rectangle intersection = GetCollisionRec(p->rect, tile->rect);
-                // Resolve collision along X axis
-                if (fabs(intersection.width) < fabs(intersection.height)) {
-                    if (newMove.x > 0)
-                        p->rect.x -= intersection.width;
-                    else if (newMove.x < 0)
-                        p->rect.x += intersection.width;
+        if (tile->tileType == BRICK && CheckCollisionRecs(p->rect, tile->rect)) {
+            Rectangle inter = GetCollisionRec(p->rect, tile->rect);
+
+            if (inter.width > 0 && inter.height > 0) {
+                // Decide o eixo de resolução
+                if (inter.width < inter.height) {
+                    p->rect.x += (p->rect.x < tile->rect.x) ? -inter.width : inter.width;
                     p->move.x = p->rect.x;
-                }
-                // Resolve collision along Y axis
-                else {
-                    if (newMove.y > 0)
-                        p->rect.y -= intersection.height;
-                    else if (newMove.y < 0)
-                        p->rect.y += intersection.height;
+                } else {
+                    p->rect.y += (p->rect.y < tile->rect.y) ? -inter.height : inter.height;
                     p->move.y = p->rect.y;
                 }
             }
         }
+    }
 
-        if (bProjectilesPlayer >= cooldownPlayer && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
-            p->projectile[cProjectilesPlayer] = CreateProjectile(
-                (Vector2){p->rect.x + (p->rect.width / 2), p->rect.y + (p->rect.height / 2)}, 
-                8, 
-                600, 
-                (Vector2){6, 12}, 
-                2, 
-                (Vector2){GetMousePosition().x, GetMousePosition().y}
-            ); 
-            InitProjectile(&p->projectile[cProjectilesPlayer++]);
+    if (p->projectileTimer >= p->cooldown && IsMouseButtonDown(MOUSE_LEFT_BUTTON)){
+        p->projectile[p->currentProjectile] = CreateProjectile(
+            (Vector2){p->rect.x + (p->rect.width / 2), p->rect.y + (p->rect.height / 2)}, 
+            8, 600, (Vector2){6, 12}, 1.5f, GetMousePosition()
+        ); 
+        InitProjectile(&p->projectile[p->currentProjectile]);
 
-            if (cProjectilesPlayer >= 10) cProjectilesPlayer = 0;
-            
-            bProjectilesPlayer = 0;
-        }
+        p->currentProjectile = (p->currentProjectile + 1) % 10;
+        p->projectileTimer = 0;
     }
 
     for (int i = 0; i < 10; i++) UpdateProjectile(&p->projectile[i]);
-    bProjectilesPlayer += delta;
-
+    p->projectileTimer += delta;
 }
 
 void PlayerDraw(Player p){

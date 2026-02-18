@@ -7,12 +7,8 @@
 #include "tile.h"
 #include "projectile.h"
 
-extern int cProjectilesPlayer;
-extern float cooldownPlayer;
-extern float bProjectilesPlayer;
-
 extern float flipH, flipV;
-extern int LastHitTime;
+extern double LastHitTime;
 
 typedef struct player{
     Rectangle rect;
@@ -21,9 +17,12 @@ typedef struct player{
     float velocity;
     int life;
     Vector2 move;
-    float acceleration;
+    float smoothing;
 
     Projectile projectile[10];
+    int currentProjectile;
+    float cooldown;
+    float projectileTimer;
 } Player;
 
 Player CreatePlayer(Texture2D text, Vector2 position, float velocity, int life);

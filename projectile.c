@@ -36,7 +36,7 @@ void UpdateProjectile(Projectile *p){
 }
 
 void DrawProjectile(Projectile p){
-    DrawCircle(p.rect.x, p.rect.y, p.rect.width, paleta[0]);
+    DrawCircle(p.rect.x, p.rect.y, p.rect.height, paleta[0]);
 }
 
 void UnloadProjectile(Projectile *p){}

@@ -6,7 +6,7 @@
 #include "constants.h"
 
 typedef struct projectile{
-    int active;
+    bool active;
     Rectangle rect;
     float velocity;
     Vector2 RangeDamage;
