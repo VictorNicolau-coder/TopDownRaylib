@@ -1,5 +1,4 @@
-#ifndef PROJECTILES_H
-#define PROJECTILES_H
+#pragma once
 
 #include "raylib.h"
 #include "raymath.h"
@@ -25,6 +24,3 @@ void InitProjectile(Projectile *p);
 void UpdateProjectile(Projectile *p);
 void DrawProjectile(Projectile p);
 void UnloadProjectile(Projectile *p);
-
-
-#endif // !PROJECTILES_H

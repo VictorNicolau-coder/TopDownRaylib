@@ -1,5 +1,12 @@
 #include "headers\player.h"
 
+cProjectilesPlayer = 0;
+cooldownPlayer = 1.0f;
+bProjectilesPlayer = 1.0f;
+
+flipH = 1; 
+flipV = 1;
+
 Player CreatePlayer(Texture2D text, Vector2 position, float velocity, int life){
     Player p = {
         .rect = (Rectangle){position.x, position.y, TILE_SIZE, TILE_SIZE},

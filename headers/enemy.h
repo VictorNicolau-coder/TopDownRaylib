@@ -1,16 +1,16 @@
-#ifndef ENEMY_H
-#define ENEMY_H
+#pragma once
 
 #include "raylib.h"
 #include "raymath.h"
 
 #include "constants.h"
+#include "player.h"
 
 extern Player jogador;
 
-int countProjectiles = 0;
-float cooldown = 2.0f;
-float betweenProjectiles = 0;
+extern int countProjectiles;
+extern float cooldown;
+extern float betweenProjectiles;
 
 typedef struct enemy{
     Rectangle rect;
@@ -28,5 +28,3 @@ Enemy CreateEnemy(Texture2D text, Vector2 position, float velocity, int life, Ve
 void EnemyUpdate(Enemy *e);
 void EnemyDraw(Enemy e);
 void EnemyUnload(Enemy *e);
-
-#endif

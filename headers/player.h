@@ -1,5 +1,4 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#pragma once
 
 #include "raylib.h"
 #include "raymath.h"
@@ -8,12 +7,12 @@
 #include "tile.h"
 #include "projectile.h"
 
-int cProjectilesPlayer = 0;
-float cooldownPlayer = 1.0f;
-float bProjectilesPlayer = 1.0f;
+extern int cProjectilesPlayer;
+extern float cooldownPlayer;
+extern float bProjectilesPlayer;
 
-float flipH = 1, flipV = 1;
-int LastHitTime;
+extern float flipH, flipV;
+extern int LastHitTime;
 
 typedef struct player{
     Rectangle rect;
@@ -36,5 +35,3 @@ void PlayerUnload(Player *p);
 void PlayerHit(Player *p, Vector2 RangeDamage);
 bool IsPlayerHittable();
 bool IsPlayerDead(Player p);
-
-#endif
