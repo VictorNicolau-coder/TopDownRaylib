@@ -1,5 +1,6 @@
 #include "headers\scenes.h"
 #include "headers\startScreen.h"
+#include <string.h>
 
 Button CreateButton(float X, float Y, float W, float H, char *label){
     Button b;

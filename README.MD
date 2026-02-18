@@ -1,6 +1,6 @@
 # Como executar:
 
-### Mingw64
+### MinGW64
 ```
-gcc *.c -o game.exe -Iraylib/include -Lraylib/lib -lraylib -lopengl32 -lgdi32 -lwinmm -lm 
+tcc *.c -o game.exe -Iraylib/include -Lraylib/lib -lraylib -lopengl32 -lgdi32 -lwinmm -lm
 ```

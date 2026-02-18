@@ -3,9 +3,9 @@
 #include "headers\projectile.h"  // garante que Projectile é conhecido
 #include "raylib.h"
 
-countProjectiles = 0;
-cooldown = 2.0f;
-betweenProjectiles = 0;
+int countProjectiles = 0;
+float cooldown = 2.0f;
+float betweenProjectiles = 0;
 
 Enemy CreateEnemy(Texture2D text, Vector2 position, float velocity, int life, Vector2 RangeDamage){
     Enemy e = {

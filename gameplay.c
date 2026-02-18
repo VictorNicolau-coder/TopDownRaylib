@@ -23,15 +23,15 @@ void GameplayInit(){
         {9, 9, 9, 9, 9, 9, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}
     };
 
-    Texture2D CeilingBrick = LoadTexture("../resources/ceil_brick.png");
-    Texture2D WallBrick = LoadTexture("../resources/wall_brick.png");
-    Texture2D ArrivalBrick = LoadTexture("../resources/arrival.png");
+    Texture2D CeilingBrick = LoadTexture("resources/ceil_brick.png");
+    Texture2D WallBrick = LoadTexture("resources/wall_brick.png");
+    Texture2D ArrivalBrick = LoadTexture("resources/arrival.png");
 
     Texture2D FloorBrick[4] = {
-        LoadTexture("../resources/floor_brick.png"),
-        LoadTexture("../resources/floor_brick2.png"),
-        LoadTexture("../resources/floor_brick3.png"),
-        LoadTexture("../resources/floor_brick4.png")
+        LoadTexture("resources/floor_brick.png"),
+        LoadTexture("resources/floor_brick2.png"),
+        LoadTexture("resources/floor_brick3.png"),
+        LoadTexture("resources/floor_brick4.png")
     };
 
     //Valor random
@@ -53,8 +53,8 @@ void GameplayInit(){
         }        
     }
 
-    jogador = CreatePlayer(LoadTexture("../resources/cat.png"), (Vector2){256.0f, 64.0f}, 250, 30);
-    enemy = CreateEnemy(LoadTexture("../resources/eye.png"), (Vector2){532.0f, 256.0f}, 50, 100, (Vector2){12, 18});
+    jogador = CreatePlayer(LoadTexture("resources/cat.png"), (Vector2){256.0f, 64.0f}, 250, 30);
+    enemy = CreateEnemy(LoadTexture("resources/eye.png"), (Vector2){532.0f, 256.0f}, 50, 100, (Vector2){12, 18});
 
     camera.rotation = 0;
     camera.offset = (Vector2){0, 0};

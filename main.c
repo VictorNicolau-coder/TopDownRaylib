@@ -5,10 +5,9 @@ int main(){
     
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "MAZE GAME");
     SetTargetFPS(60);
+    
+    font = LoadFontEx("resources/Enchanted Land.otf", 100, 0, 250);
 
-    //SetWindowState(FLAG_FULLSCREEN_MODE);
-
-    font = LoadFontEx("../resources/Enchanted Land.otf", 100, 0, 250);
     SceneInit();
 
     while (!WindowShouldClose()){

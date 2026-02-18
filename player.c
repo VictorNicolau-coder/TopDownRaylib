@@ -1,11 +1,13 @@
 #include "headers\player.h"
 
-cProjectilesPlayer = 0;
-cooldownPlayer = 1.0f;
-bProjectilesPlayer = 1.0f;
+int cProjectilesPlayer = 0;
+float cooldownPlayer = 1.0f;
+float bProjectilesPlayer = 1.0f;
 
-flipH = 1; 
-flipV = 1;
+float flipH = 1; 
+float flipV = 1;
+
+int LastHitTime = 0;
 
 Player CreatePlayer(Texture2D text, Vector2 position, float velocity, int life){
     Player p = {
