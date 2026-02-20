@@ -1,5 +1,5 @@
-#include "headers\scenes.h"
-#include "headers\gameplay.h"
+#include "headers/scenes.h"
+#include "headers/gameplay.h"
 
 void GameplayInit(){
     int position = 0;
@@ -73,21 +73,38 @@ void GameplayUpdate(){
     EnemyUpdate(&enemy);
     PlayerUpdate(&jogador, parede, sizeof(parede)/sizeof(parede[0]));
     
-    if (IsPlayerDead(jogador) == false){    
-        for (int j = 0; j < 10; j++){
-            if (CheckCollisionRecs(jogador.rect, enemy.projectile[j].rect) && IsPlayerHittable()){
-                if (timer >= duration)
-                    InitCameraShake(2.0f, 0.5f);
-                PlayerHit(&jogador, enemy.projectile[j].RangeDamage);
-            }
-        }
+    // === PLAYER VS ENEMY PROJECTILES ===
+    for (int i = 0; i < 10; i++) {
+        if (enemy.projectile[i].active &&
+            CheckCollisionRecs(jogador.rect, enemy.projectile[i].rect) &&
+            IsPlayerHittable()) {
 
-        if (CheckCollisionRecs(jogador.rect, enemy.rect) && IsPlayerHittable()){
-            if (timer >= duration)
-                InitCameraShake(10.0f, 1.0f);
             PlayerHit(&jogador, enemy.RangeDamage);
-        }    
-    } else if (IsPlayerDead(jogador)){
+            enemy.projectile[i].active = false;
+            InitCameraShake(2.0f, 0.5f);
+        }
+    }
+
+    // === ENEMY VS PLAYER PROJECTILES ===
+    for (int i = 0; i < 10; i++) {
+        if (jogador.projectile[i].active &&
+            CheckCollisionRecs(jogador.projectile[i].rect, enemy.rect) &&
+            !IsEnemyDead(enemy)) {
+
+            EnemyHit(&enemy, (Vector2){6, 12});
+            jogador.projectile[i].active = false;
+            InitCameraShake(3.0f, 0.3f);
+        }
+    }
+
+    // === PLAYER VS ENEMY (corpo a corpo) ===
+    if (CheckCollisionRecs(jogador.rect, enemy.rect) && IsPlayerHittable()) {
+        InitCameraShake(10.0f, 1.0f);
+        PlayerHit(&jogador, enemy.RangeDamage);
+    }
+
+    // === Morte do player ===
+    if (IsPlayerDead(jogador)){
         timerMorte += GetFrameTime();
         if (timerMorte > 2) trasition(END);
     }

@@ -4,9 +4,7 @@
 #include "raymath.h"
 
 #include "constants.h"
-#include "player.h"
-
-extern Player jogador;
+#include "projectile.h"
 
 extern int countProjectiles;
 extern float cooldown;
@@ -28,3 +26,5 @@ Enemy CreateEnemy(Texture2D text, Vector2 position, float velocity, int life, Ve
 void EnemyUpdate(Enemy *e);
 void EnemyDraw(Enemy e);
 void EnemyUnload(Enemy *e);
+void EnemyHit(Enemy *e, Vector2 RangeDamage);
+bool IsEnemyDead(Enemy e);

@@ -4,6 +4,7 @@ float flipH = 1;
 float flipV = 1;
 
 double LastHitTime = 0;
+const double INVULNERABILITY_TIME = 1.0; // 1 segundo de invulnerabilidade
 
 Player CreatePlayer(Texture2D text, Vector2 position, float velocity, int life){
     Player p = {
@@ -13,7 +14,7 @@ Player CreatePlayer(Texture2D text, Vector2 position, float velocity, int life){
         .velocity = velocity,
         .life = life,
         .move = position,
-        .smoothing = 0.25,
+        .smoothing = 0.35,
 
         .currentProjectile = 0,
         .cooldown = 0.2f,
@@ -24,11 +25,10 @@ Player CreatePlayer(Texture2D text, Vector2 position, float velocity, int life){
 
 void PlayerUpdate(Player *p, Tile *tiles, int length){
     float delta = GetFrameTime();
-    
     if (p->life <= 0) return;
-
+    
+    //===MOVIMENTAÇÃO===
     Vector2 newMove = {0};
-
     float hor_move = (IsKeyDown(KEY_RIGHT) - IsKeyDown(KEY_LEFT));
     float ver_move = (IsKeyDown(KEY_DOWN) - IsKeyDown(KEY_UP));
 
@@ -50,9 +50,9 @@ void PlayerUpdate(Player *p, Tile *tiles, int length){
     p->rect.x = Lerp(p->rect.x, p->move.x, p->smoothing);
     p->rect.y = Lerp(p->rect.y, p->move.y, p->smoothing);
 
+    //===COLISÃO COM PAREDES===
     for (int i = 0; i < length; i++) {
         Tile *tile = &tiles[i];
-
         if (tile->tileType == BRICK && CheckCollisionRecs(p->rect, tile->rect)) {
             Rectangle inter = GetCollisionRec(p->rect, tile->rect);
 
@@ -69,6 +69,7 @@ void PlayerUpdate(Player *p, Tile *tiles, int length){
         }
     }
 
+    // === TIRO DO PLAYER ===
     if (p->projectileTimer >= p->cooldown && IsMouseButtonDown(MOUSE_LEFT_BUTTON)){
         p->projectile[p->currentProjectile] = CreateProjectile(
             (Vector2){p->rect.x + (p->rect.width / 2), p->rect.y + (p->rect.height / 2)}, 
@@ -105,23 +106,22 @@ void PlayerUnload(Player *p){
     UnloadTexture(p->texture);
 }
 
-//Funções 
+//=== FUNÇÕES DE ESTADO ===
 bool IsPlayerHittable(){
-    return (LastHitTime == 0 || GetTime() > LastHitTime + 2) ? true : false;
+    return (GetTime() > LastHitTime + INVULNERABILITY_TIME);
 }
 
 void PlayerHit(Player *p, Vector2 RangeDamage){
-    int randomValue = GetRandomValue(RangeDamage.x, RangeDamage.y);
+    if (!IsPlayerHittable()) return;
 
-    if (IsPlayerHittable()){
-        p->life -= randomValue;
-        if (p->life < 0) p->life = 0;
+    int damage = GetRandomValue((int)RangeDamage.x, (int)RangeDamage.y);
+    p->life -= damage;
+    if (p->life < 0) p->life = 0;
 
-        printf("-%d\n", randomValue);
-        LastHitTime = GetTime();
-    }
+    LastHitTime = GetTime();
+    printf("Dano recebido: -%d\n", damage);
 }
 
 bool IsPlayerDead(Player p){
-    return (p.life > 0) ? false : true;
+    return p.life <= 0;
 }
