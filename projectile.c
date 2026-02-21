@@ -16,9 +16,11 @@ Projectile CreateProjectile(Vector2 position, float size, float velocity, Vector
     return p;
 }
 
-void InitProjectile(Projectile *p){
-    p->direction = Vector2Subtract(p->target, (Vector2){p->rect.x, p->rect.y});
-    p->direction = Vector2Normalize(p->direction);
+void InitProjectile(Projectile *p, Vector2 origin, Vector2 target) {
+    p->rect.x = origin.x;
+    p->rect.y = origin.y;
+
+    p->direction = Vector2Normalize(Vector2Subtract(target, origin));
 }
 
 void UpdateProjectile(Projectile *p){

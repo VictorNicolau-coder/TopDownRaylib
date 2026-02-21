@@ -25,17 +25,6 @@ void EnemyUpdate(Enemy *e){
      // Movimento simples (pode ser AI mais complexa depois)
     e->rect.x += sin(GetTime()) * e->velocity * delta;
 
-    // Disparo automático (em direção fixa por enquanto)
-    if (betweenProjectiles >= cooldown) {
-        e->projectile[countProjectiles] = CreateProjectile(
-            (Vector2){e->rect.x + e->rect.width / 2, e->rect.y + e->rect.height / 2},
-            8, 600, (Vector2){6, 12}, 2, (Vector2){e->rect.x + 300, e->rect.y}
-        ); 
-        InitProjectile(&e->projectile[countProjectiles]);
-        countProjectiles = (countProjectiles + 1) % 10;
-        betweenProjectiles = 0;
-    }
-
     /* float velocity = 0.3;
 
     e->rect.y = 210 + sin(GetTime()*velocity) * 140;
@@ -68,8 +57,24 @@ void EnemyUnload(Enemy *e){
 }
 
 // === FUNÇÕES DE ESTADO ===
+void EnemyShoot(Enemy * e, Vector2 target){
+    // Disparo automático (em direção fixa por enquanto)
+    if (betweenProjectiles >= cooldown) {
+        
+        e->projectile[countProjectiles] = CreateProjectile(
+            (Vector2){e->rect.x + e->rect.width / 2, e->rect.y + e->rect.height / 2},
+            8, 600, (Vector2){6, 12}, 2, (Vector2){e->rect.x, e->rect.y}
+        );
+
+        InitProjectile(&e->projectile[countProjectiles], (Vector2){e->rect.x + 40, e->rect.y + 40}, target);
+        countProjectiles = (countProjectiles + 1) % 10;
+        betweenProjectiles = 0;
+    }
+}
+
 void EnemyHit(Enemy *e, Vector2 RangeDamage){
     if (IsEnemyDead(*e)) return;
+    
     int damage = GetRandomValue((int)RangeDamage.x, (int)RangeDamage.y);
     e->life -= damage;
     if (e->life < 0) e->life = 0;

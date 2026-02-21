@@ -10,7 +10,7 @@ extern int countProjectiles;
 extern float cooldown;
 extern float betweenProjectiles;
 
-typedef struct enemy{
+typedef struct {
     Rectangle rect;
     Texture2D texture;
     
@@ -26,5 +26,7 @@ Enemy CreateEnemy(Texture2D text, Vector2 position, float velocity, int life, Ve
 void EnemyUpdate(Enemy *e);
 void EnemyDraw(Enemy e);
 void EnemyUnload(Enemy *e);
+
+void EnemyShoot(Enemy *e, Vector2 target);
 void EnemyHit(Enemy *e, Vector2 RangeDamage);
 bool IsEnemyDead(Enemy e);

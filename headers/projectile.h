@@ -5,7 +5,7 @@
 
 #include "constants.h"
 
-typedef struct projectile{
+typedef struct {
     bool active;
     Rectangle rect;
     float velocity;
@@ -19,7 +19,7 @@ typedef struct projectile{
 } Projectile;
 
 Projectile CreateProjectile(Vector2 position, float size, float velocity, Vector2 RangeDamage, float duration, Vector2 target);
-void InitProjectile(Projectile *p);
+void InitProjectile(Projectile *p, Vector2 origin, Vector2 target);
 
 void UpdateProjectile(Projectile *p);
 void DrawProjectile(Projectile p);

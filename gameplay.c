@@ -1,6 +1,12 @@
 #include "headers/scenes.h"
 #include "headers/gameplay.h"
 
+Texture2D CeilingBrick;
+Texture2D WallBrick;
+Texture2D ArrivalBrick;
+
+Texture2D FloorBrick[4];
+
 void GameplayInit(){
     int position = 0;
 
@@ -23,16 +29,14 @@ void GameplayInit(){
         {9, 9, 9, 9, 9, 9, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}
     };
 
-    Texture2D CeilingBrick = LoadTexture("resources/ceil_brick.png");
-    Texture2D WallBrick = LoadTexture("resources/wall_brick.png");
-    Texture2D ArrivalBrick = LoadTexture("resources/arrival.png");
+    CeilingBrick = LoadTexture("resources/ceil_brick.png");
+    WallBrick = LoadTexture("resources/wall_brick.png");
+    ArrivalBrick = LoadTexture("resources/arrival.png");
 
-    Texture2D FloorBrick[4] = {
-        LoadTexture("resources/floor_brick.png"),
-        LoadTexture("resources/floor_brick2.png"),
-        LoadTexture("resources/floor_brick3.png"),
-        LoadTexture("resources/floor_brick4.png")
-    };
+    FloorBrick[0] = LoadTexture("resources/floor_brick.png");
+    FloorBrick[1] = LoadTexture("resources/floor_brick2.png");
+    FloorBrick[2] = LoadTexture("resources/floor_brick3.png");
+    FloorBrick[3] = LoadTexture("resources/floor_brick4.png");
 
     //Valor random
     int r;
@@ -72,7 +76,16 @@ void GameplayInit(){
 void GameplayUpdate(){
     EnemyUpdate(&enemy);
     PlayerUpdate(&jogador, parede, sizeof(parede)/sizeof(parede[0]));
+
+    // === PLAYER SHOOT ===
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        Vector2 mouseWorld = GetScreenToWorld2D(GetMousePosition(), camera);
+        PlayerShoot(&jogador, mouseWorld);
+    }
     
+    // === ENEMY SHOOT ===
+    //EnemyShoot(&enemy, jogador.move);
+
     // === PLAYER VS ENEMY PROJECTILES ===
     for (int i = 0; i < 10; i++) {
         if (enemy.projectile[i].active &&
@@ -104,7 +117,7 @@ void GameplayUpdate(){
     }
 
     // === Morte do player ===
-    if (IsPlayerDead(jogador)){
+    if (IsPlayerDead(&jogador)){
         timerMorte += GetFrameTime();
         if (timerMorte > 2) trasition(END);
     }
@@ -118,7 +131,7 @@ void GameplayDraw(){
     BeginMode2D(camera);
 
         for (int i = 0; i < ColunmsMap*RowsMap; i++) TileDraw(parede[i]);
-        PlayerDraw(jogador);
+        PlayerDraw(&jogador);
         TileDraw(arrival);
         EnemyDraw(enemy);
 
@@ -139,6 +152,16 @@ void GameplayDraw(){
 }
 
 void GameplayUnload(){
-    TileUnload(&arrival);
+    UnloadTexture(CeilingBrick);
+    UnloadTexture(WallBrick);
+    UnloadTexture(ArrivalBrick);
+
+    for (int i = 0; i < 4; i++)
+        UnloadTexture(FloorBrick[i]);
+
+    PlayerUnload(&jogador); // apenas se ele tiver textura própria
+    EnemyUnload(&enemy); 
+
     PlayerUnload(&jogador);
+    EnemyUnload(&enemy);
 }
