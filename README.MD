@@ -6,7 +6,7 @@ Topdown game produced to learn about oop-like C, libraries and makefile.
 
 ## How to play
 
-Use make commands to compile and run and remember of have w64devkit installed
+Use make commands to compile and run, remember of have w64devkit installed
 
 ```
 make run
