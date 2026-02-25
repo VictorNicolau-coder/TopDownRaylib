@@ -3,7 +3,7 @@
 
 int main(){
     
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "MAZE GAME");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "USELESS CAT");
     SetTargetFPS(60);
     
     font = LoadFontEx("resources/Enchanted Land.otf", 100, 0, 250);
