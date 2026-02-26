@@ -11,7 +11,8 @@ extern double LastHitTime;
 
 typedef enum {
     IDLE,
-    WALKING
+    WALKING, 
+    DEAD
 } PlayerState;
 
 typedef struct {

@@ -1,8 +1,8 @@
-# Useless cat:
+# Useless cat🐱
 
 ## About
 
-Topdown game produced to learn about oop-like C, libraries and makefile. 
+Topdown game produced to learn about oop-like C, libraries and makefile. I plan to make a scalable and well-structured game.
 
 ## How to play
 

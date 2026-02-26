@@ -14,35 +14,47 @@ Enemy CreateEnemy(Texture2D text, Vector2 position, float velocity, int life, Ve
 
         .velocity = velocity,
         .life = life,
-        .RangeDamage = RangeDamage
+        .RangeDamage = RangeDamage,
+
+        .isHit = false,
+        .hitTimer = 0.0f
     };
     return e;
 }
 
-void EnemyUpdate(Enemy *e){
+void EnemyUpdate(Enemy *e, Vector2 target){
     float delta = GetFrameTime();
 
+    if (e->isHit){
+        e->hitTimer -= delta;
+        if (e->hitTimer <= 0) e->isHit = false;
+    }
+
      // Movimento simples (pode ser AI mais complexa depois)
-    e->rect.x += sin(GetTime()) * e->velocity * delta;
+    Vector2 direction = Vector2Subtract((Vector2){target.x, target.y}, (Vector2){e->rect.x, e->rect.y});
+    direction = Vector2Normalize(direction);
 
-    /* float velocity = 0.3;
-
-    e->rect.y = 210 + sin(GetTime()*velocity) * 140;
-    e->rect.x = 530 + cos(GetTime()*velocity) * 266; */
-
+    e->rect.x += direction.x * e->velocity * delta;
+    e->rect.y += direction.y * e->velocity * delta;
 
     for (int i = 0; i < 10; i++) UpdateProjectile(&e->projectile[i]);
 
     //Informa o tempo em que o último projétil foi lançado
     betweenProjectiles += delta;
-  
 }
 
 void EnemyDraw(Enemy e){
     Rectangle source = {0, 0, 128, 128};
     Vector2 position = {e.rect.x - 24, e.rect.y - 25};
 
-    DrawTextureRec(e.texture, source, position, WHITE);
+    if (e.isHit) {
+        // ativa modo de mistura (a cor do DrawTexture se mistura com o branco)
+        BeginBlendMode(BLEND_ADDITIVE);
+        DrawTextureRec(e.texture, source, position, WHITE);
+        EndBlendMode();
+    } else {
+        DrawTextureRec(e.texture, source, position, WHITE);
+    }
 
     //Debug colisão
     //DrawRectangle(e.rect.x, e.rect.y, e.rect.width, e.rect.height, BLACK);
@@ -76,9 +88,10 @@ void EnemyHit(Enemy *e, Vector2 RangeDamage){
     if (IsEnemyDead(*e)) return;
     
     int damage = GetRandomValue((int)RangeDamage.x, (int)RangeDamage.y);
+    
+    e->isHit = true;
+    e->hitTimer = 0.1f;
     e->life -= damage;
-    if (e->life < 0) e->life = 0;
-    printf("Inimigo recebeu %d de dano\n", damage);
 }
 
 bool IsEnemyDead(Enemy e){

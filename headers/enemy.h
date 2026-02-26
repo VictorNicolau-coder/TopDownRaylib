@@ -18,12 +18,15 @@ typedef struct {
     int life;
     Vector2 RangeDamage;
 
+    bool isHit;
+    float hitTimer;
+
     Projectile projectile[10];
 } Enemy;
 
 Enemy CreateEnemy(Texture2D text, Vector2 position, float velocity, int life, Vector2 RangeDamage);
 
-void EnemyUpdate(Enemy *e);
+void EnemyUpdate(Enemy *e, Vector2 target);
 void EnemyDraw(Enemy e);
 void EnemyUnload(Enemy *e);
 

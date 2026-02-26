@@ -16,7 +16,7 @@ Player CreatePlayer(Texture2D text, Vector2 position, float velocity, int life){
         .velocity = velocity,
         .life = life,
         .move = position,
-        .smoothing = 0.35,
+        .smoothing = 0.15,
 
         .currentProjectile = 0,
         .cooldown = 0.2f,
@@ -115,6 +115,11 @@ void PlayerDraw(Player *p){
             p->rotation = sinf(GetTime() * 12) * 10; // Multiplicador de fora dita qual será a angulação
             break;
         
+        case DEAD:
+            p->scale = Lerp(p->scale, 1.0f, 0.1f);
+            p->rotation = Lerp(p->rotation, 0.0f, 0.05f);
+            break;
+
         default:
         break;
     }
@@ -129,7 +134,6 @@ void PlayerDraw(Player *p){
         DrawProjectile(p->projectile[i]);
     }
 
-    printf("Scale: %f\n", p->scale, p->rotation);
 }
 
 void PlayerUnload(Player *p){
@@ -159,10 +163,13 @@ void PlayerHit(Player *p, Vector2 RangeDamage){
 
     int damage = GetRandomValue((int)RangeDamage.x, (int)RangeDamage.y);
     p->life -= damage;
-    if (p->life < 0) p->life = 0;
-
+    if (p->life < 0){ 
+        p->life = 0;    
+        p->state = DEAD;
+    }
+    
     LastHitTime = GetTime();
-    printf("Dano recebido: -%d\n", damage);
+    printf("Dano recebido: %d\n", damage);
 }
 
 bool IsPlayerDead(Player *p){

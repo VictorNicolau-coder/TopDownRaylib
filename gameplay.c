@@ -58,7 +58,7 @@ void GameplayInit(){
     }
 
     jogador = CreatePlayer(LoadTexture("resources/cat.png"), (Vector2){256.0f, 64.0f}, 250, 30);
-    enemy = CreateEnemy(LoadTexture("resources/eye.png"), (Vector2){532.0f, 256.0f}, 50, 100, (Vector2){12, 18});
+    enemy = CreateEnemy(LoadTexture("resources/eye.png"), (Vector2){532.0f, 256.0f}, 30, 100, (Vector2){12, 18});
 
     camera.rotation = 0;
     camera.offset = (Vector2){0, 0};
@@ -74,17 +74,18 @@ void GameplayInit(){
 }
 
 void GameplayUpdate(){
-    EnemyUpdate(&enemy);
+    EnemyUpdate(&enemy, (Vector2){jogador.rect.x, jogador.rect.y});
     PlayerUpdate(&jogador, parede, sizeof(parede)/sizeof(parede[0]));
 
     // === PLAYER SHOOT ===
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !IsPlayerDead(&jogador)) {
         Vector2 mouseWorld = GetScreenToWorld2D(GetMousePosition(), camera);
         PlayerShoot(&jogador, mouseWorld);
     }
     
     // === ENEMY SHOOT ===
-    //EnemyShoot(&enemy, jogador.move);
+    if (!IsPlayerDead(&jogador))
+        EnemyShoot(&enemy, jogador.move);
 
     // === PLAYER VS ENEMY PROJECTILES ===
     for (int i = 0; i < 10; i++) {
@@ -111,7 +112,7 @@ void GameplayUpdate(){
     }
 
     // === PLAYER VS ENEMY (corpo a corpo) ===
-    if (CheckCollisionRecs(jogador.rect, enemy.rect) && IsPlayerHittable()) {
+    if (CheckCollisionRecs(jogador.rect, enemy.rect) && IsPlayerHittable() && !IsPlayerDead(&jogador)) {
         InitCameraShake(10.0f, 1.0f);
         PlayerHit(&jogador, enemy.RangeDamage);
     }
